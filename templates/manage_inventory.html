@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Inventory</title>
+</head>
+<body>
+    <h1>Manage Inventory</h1>
+    <form method="POST">
+        <input type="hidden" name="action" value="add">
+        <input type="text" name="dining_hall_id" placeholder="Dining Hall ID">
+        <input type="text" name="food_item" placeholder="Food Item">
+        <input type="number" name="quantity" placeholder="Quantity">
+        <input type="text" name="price" placeholder="Price">
+        <input type="datetime-local" name="expiration_time">
+        <button type="submit">Add Item</button>
+    </form>
+
+    {% for item in inventory %}
+    <form method="POST">
+        <input type="hidden" name="action" value="update">
+        <input type="hidden" name="inventory_id" value="{{ item[0] }}">
+        <!-- Pre-fill form fields with item data for updating -->
+        <input type="text" name="dining_hall_id" value="{{ item[1] }}">
+        <input type="text" name="food_item" value="{{ item[2] }}">
+        <input type="number" name="quantity" value="{{ item[3] }}">
+        <input type="text" name="price" value="{{ item[4] }}">
+        <input type="datetime-local" name="expiration_time" value="{{ item[5] }}">
+        <button type="submit">Update Item</button>
+    </form>
+    <form method="POST">
+        <input type="hidden" name="action" value="delete">
+        <input type="hidden" name="inventory_id" value="{{ item[0] }}">
+        <button type="submit">Delete Item</button>
+    </form>
+    {% endfor %}
+</body>
+</html>
