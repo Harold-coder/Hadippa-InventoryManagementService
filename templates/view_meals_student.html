@@ -1,6 +1,60 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Available Meals</title>
+    <script>
+        // Function to load meals using GraphQL
+        function loadMeals() {
+            const query = {
+                query: `{
+                    allMeals {
+                        inventoryId
+                        diningHallId
+                        foodItem
+                        quantity
+                        price
+                        expirationTime
+                    }
+                }`
+            };
+
+            fetch('/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(query),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const meals = data.data.allMeals;
+                updateTable(meals);
+            })
+            .catch(error => {
+                console.error('Error fetching meals:', error);
+            });
+        }
+
+        // Function to update the table with meal data
+        function updateTable(meals) {
+            const table = document.getElementById('mealsTableBody');
+            table.innerHTML = ''; // Clear existing rows
+            meals.forEach(meal => {
+                const row = `<tr>
+                    <td>${meal.inventoryId}</td>
+                    <td>${meal.diningHallId}</td>
+                    <td>${meal.foodItem}</td>
+                    <td>${meal.quantity}</td>
+                    <td>${meal.price}</td>
+                    <td>${meal.expirationTime}</td>
+                </tr>`;
+                table.innerHTML += row;
+            });
+        }
+
+        // Load meals when the page is loaded
+        window.onload = loadMeals;
+    </script>
 </head>
 <body>
     <h1>Available Meals</h1>
@@ -11,22 +65,11 @@
             <th>Food Item</th>
             <th>Quantity</th>
             <th>Price</th>
+            <th>Expiration Time</th>
         </tr>
-        {% for item in inventory %}
-        <tr>
-            <td>{{ item[0] }}</td>
-            <td>{{ item[1] }}</td>
-            <td>{{ item[2] }}</td>
-            <td>${{ item[3] }}</td>
-            <td>${{ item[4] }}</td>
-        </tr>
-        {% endfor %}
+        <tbody id="mealsTableBody">
+            <!-- Meals will be loaded here dynamically -->
+        </tbody>
     </table>
-    <div>
-        <!-- Pagination Links -->
-        {% for page_num in range(1, total_pages + 1) %}
-            <a href="{{ url_for('view_meals_student', page=page_num) }}">{{ page_num }}</a>
-        {% endfor %}
-    </div>
 </body>
 </html>

@@ -7,6 +7,7 @@
     <h1>Inventory Overview</h1>
     <a href="{{ url_for('manage_inventory') }}">Manage Inventory</a>
     <table>
+        <!-- Table Headers -->
         <tr>
             <th>Inventory ID</th>
             <th>Dining Hall ID</th>
@@ -15,6 +16,7 @@
             <th>Price</th>
             <th>Expiration Time</th>
         </tr>
+        <!-- Inventory Items -->
         {% for item in inventory %}
         <tr>
             <td>{{ item[0] }}</td>
@@ -26,5 +28,10 @@
         </tr>
         {% endfor %}
     </table>
+    <!-- Pagination Controls -->
+    <div>
+        <a href="{{ url_for('view_meals_worker', page=page-1) }}" {% if page <= 1 %} style="visibility: hidden;" {% endif %}>Previous</a>
+        <a href="{{ url_for('view_meals_worker', page=page+1) }}">Next</a>
+    </div>
 </body>
 </html>
