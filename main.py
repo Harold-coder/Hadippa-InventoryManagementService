@@ -23,7 +23,6 @@ def get_db_connection():
 def index():
     return render_template('index.html')
 
-
 #GRAPHQL
 class MealType(ObjectType):
     inventory_id = String()
