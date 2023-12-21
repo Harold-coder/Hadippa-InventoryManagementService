@@ -163,6 +163,10 @@ def inventory_item(inventory_id):
 
     return jsonify(formatted_item)
 
+@app.route("/")
+def index():
+    return jsonify({"message": "Welcome to the InventoryManagement API Hosted on EC2!"})
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8012)
 
