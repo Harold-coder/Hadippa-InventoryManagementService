@@ -90,19 +90,18 @@ def available_meals():
 
     return jsonify(meals)
 
-@app.route('/manage_inventory', methods=['GET', 'POST'])
-def manage_inventory():
+# Endpoint for viewing the inventory
+@app.route('/view_inventory', methods=['GET'])
+def view_inventory():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    if request.method == 'POST':
-        action = request.form.get('action')
-        inventory_id = request.form.get('inventory_id')
-
+    # Fetch all inventory items
     cursor.execute("SELECT * FROM Inventory")
     inventory = cursor.fetchall()
     conn.close()
 
+    # Format the inventory for JSON response
     formatted_inventory = [
         {
             "inventory_id": item[0],
@@ -114,6 +113,48 @@ def manage_inventory():
     ]
 
     return jsonify(formatted_inventory)
+
+@app.route('/update_inventory', methods=['POST'])
+def update_inventory():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Handle POST request for updating the inventory
+    action = request.form.get('action')
+    inventory_id = request.form.get('inventory_id')
+
+    dining_hall_id = request.form.get('dining_hall_id')
+    food_item = request.form.get('food_item')
+    quantity = request.form.get('quantity', type=int)
+    price = request.form.get('price', type=float)
+    expiration_time = request.form.get('expiration_time')
+
+    # Update or delete inventory items based on the action
+    if action == 'update':
+        # SQL query to update an existing inventory item
+        cursor.execute(
+            "UPDATE Inventory SET DiningHallID=%s, FoodItem=%s, Quantity=%s, Price=%s, ExpirationTime=%s WHERE InventoryID=%s",
+            (dining_hall_id, food_item, quantity, price, expiration_time, inventory_id))
+        conn.commit()
+    elif action == 'delete':
+        # SQL query to delete an inventory item
+        cursor.execute("DELETE FROM Inventory WHERE InventoryID=%s", (inventory_id,))
+        conn.commit()
+    elif action == 'add':
+        # SQL query to add a new inventory item
+        cursor.execute(
+            "INSERT INTO Inventory (DiningHallID, FoodItem, Quantity, Price, ExpirationTime) VALUES (%s, %s, %s, %s, %s)",
+            (dining_hall_id, food_item, quantity, price, expiration_time))
+        conn.commit()
+    else:
+        return jsonify({"error": "Invalid action"}), 400
+
+    # Commit the transaction and close the connection
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return jsonify({"success": f"Inventory item {action}d successfully"})
 
 @app.route("/meals_by_dining_hall/<string:dining_hall_id>")
 def meals_by_dining_hall(dining_hall_id):
