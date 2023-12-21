@@ -67,10 +67,21 @@ def view_meals_student():
 def view_meals_worker():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
+    dining_hall_id = request.args.get('dining_hall_id', default=None, type=str)
+    inventory_id = request.args.get('inventory_id', default=None, type=int)
 
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM Inventory LIMIT %s OFFSET %s", (per_page, (page - 1) * per_page))
+
+    if inventory_id:
+        cursor.execute("SELECT * FROM Inventory WHERE InventoryID = %s LIMIT %s OFFSET %s",
+                       (inventory_id, per_page, (page - 1) * per_page))
+    elif dining_hall_id:
+        cursor.execute("SELECT * FROM Inventory WHERE DiningHallID = %s LIMIT %s OFFSET %s",
+                       (dining_hall_id, per_page, (page - 1) * per_page))
+    else:
+        cursor.execute("SELECT * FROM Inventory LIMIT %s OFFSET %s", (per_page, (page - 1) * per_page))
+
     inventory_items = cursor.fetchall()
     conn.close()
 
@@ -137,6 +148,51 @@ def manage_inventory():
 
     return render_template('manage_inventory.html', inventory=formatted_inventory)
 
+
+@app.route("/view_meals_student/<string:dining_hall_id>")
+def meals_by_dining_hall(dining_hall_id):
+    current_datetime = datetime.now()
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    query = """
+        SELECT * FROM Inventory 
+        WHERE DiningHallID = %s 
+        AND expirationtime > %s
+        """
+    cursor.execute(query, (dining_hall_id, current_datetime))
+    meals = cursor.fetchall()
+    conn.close()
+    return render_template('meals_by_dining_hall.html', meals=meals, dining_hall_id=dining_hall_id)
+
+
+
+@app.route("/view_meals_student/<int:inventory_id>")
+def inventory_item(inventory_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    current_datetime = datetime.now()  # Get the current date and time
+
+    query = """
+            SELECT * FROM Inventory 
+            WHERE InventoryID = %s 
+            AND expirationtime > %s
+            """
+
+    # Provide both inventory_id and current_datetime as parameters
+    cursor.execute(query, (inventory_id, current_datetime))
+    item = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if item is None:
+        return "Inventory item not found", 404
+
+    print(item)
+
+    return render_template('inventory_item.html', item=item)
 
 # Adding GraphQL route
 app.add_url_rule(

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory Item Details</title>
+</head>
+<body>
+    <h1>Inventory Item Details</h1>
+    {% if item %}
+        <p>Inventory Number: {{ item[0] }}</p> <!-- Adjust indices as per your query -->
+        <p>Name: {{ item[1] }}</p>
+        <p>Dining Hall ID: {{ item[2] }}</p>
+        <p>Expiration Time: {{ item[3] }}</p>
+        <!-- Add more details as per your Inventory table structure -->
+    {% else %}
+        <p>Inventory item not found.</p>
+    {% endif %}
+</body>
+</html>

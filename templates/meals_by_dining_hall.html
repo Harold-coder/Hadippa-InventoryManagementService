@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Meals in Dining Hall {{ dining_hall_id }}</title>
+</head>
+<body>
+    <h1>Meals Available in Dining Hall: {{ dining_hall_id }}</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Inventory ID</th>
+                <th>Dining Hall</th>
+                <th>Food Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Expiration Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for meal in meals %}
+            <tr>
+                <td>{{ meal[0] }}</td> <!-- Assuming meal[0] is InventoryID -->
+                <td>{{ meal[1] }}</td> <!-- Assuming meal[1] is DiningHallID -->
+                <td>{{ meal[2] }}</td> <!-- Assuming meal[2] is FoodItem -->
+                <td>{{ meal[3] }}</td> <!-- Assuming meal[3] is Quantity -->
+                <td>${{ '%0.2f' % meal[4] }}</td> <!-- Assuming meal[4] is Price -->
+                <td>{{ meal[5].strftime('%Y-%m-%d %H:%M:%S') if meal[5] else 'N/A' }}</td> <!-- Assuming meal[5] is ExpirationTime -->
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6">No meals available in this dining hall.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

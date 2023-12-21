@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Meals Listing</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Meals Listing</h1>
+    <p>Filter applied: <strong>{{ filter_type.title() }}</strong> with value <strong>{{ filter_value }}</strong></p>
+
+    {% if meals %}
+        <table>
+            <tr>
+                <th>Meal ID</th>
+                <th>Name</th>
+                <th>Dining Hall ID</th>
+                <th>Inventory Number</th>
+                <th>Expiration Time</th>
+                <!-- Add more columns as per your Inventory table structure -->
+            </tr>
+            {% for meal in meals %}
+            <tr>
+                <td>{{ meal.meal_id }}</td> <!-- Adjust field names based on your database schema -->
+                <td>{{ meal.name }}</td>
+                <td>{{ meal.dining_hall_id }}</td>
+                <td>{{ meal.inventory_number }}</td>
+                <td>{{ meal.expirationtime }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No meals found for the selected filter.</p>
+    {% endif %}
+</body>
+</html>
