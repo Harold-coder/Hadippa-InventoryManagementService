@@ -62,7 +62,7 @@ app.add_url_rule(
     )
 )
 
-@app.route('/available_meals')
+@app.route('/available_meals', methods=['GET'])
 def available_meals():
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -156,7 +156,7 @@ def update_inventory():
 
     return jsonify({"success": f"Inventory item {action}d successfully"})
 
-@app.route("/meals_by_dining_hall/<string:dining_hall_id>")
+@app.route("/meals_by_dining_hall/<string:dining_hall_id>", methods=['GET'])
 def meals_by_dining_hall(dining_hall_id):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -180,7 +180,7 @@ def meals_by_dining_hall(dining_hall_id):
 
     return jsonify(formatted_meals)
 
-@app.route("/inventory_item/<int:inventory_id>")
+@app.route("/inventory_item/<int:inventory_id>", methods=['GET'])
 def inventory_item(inventory_id):
     conn = get_db_connection()
     cursor = conn.cursor()
