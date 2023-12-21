@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 import psycopg2
 from datetime import datetime
-from credentials import databaseKeys
 from graphene import ObjectType, String, List, Schema
 from flask_graphql import GraphQLView
 
@@ -13,8 +12,8 @@ def get_db_connection():
     return psycopg2.connect(
         host='db-cc.co4twflu4ebv.us-east-1.rds.amazonaws.com',
         port=5432,
-        user=databaseKeys.username,  # Replace with your actual username
-        password=databaseKeys.password,  # Replace with your actual password
+        user='master',
+        password='MasterPassword',
         database='lion_leftovers'
     )
 
