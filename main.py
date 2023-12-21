@@ -62,8 +62,8 @@ app.add_url_rule(
     )
 )
 
-@app.route('/view_meals_student')
-def view_meals_student():
+@app.route('/available_meals')
+def available_meals():
     conn = get_db_connection()
     cursor = conn.cursor()
     # Get the current time
@@ -115,16 +115,15 @@ def manage_inventory():
 
     return jsonify(formatted_inventory)
 
-@app.route("/view_meals_student/<string:dining_hall_id>")
+@app.route("/meals_by_dining_hall/<string:dining_hall_id>")
 def meals_by_dining_hall(dining_hall_id):
     conn = get_db_connection()
     cursor = conn.cursor()
     query = """
         SELECT * FROM Inventory 
         WHERE DiningHallID = %s 
-        AND expirationtime > %s
     """
-    cursor.execute(query, (dining_hall_id, datetime.now()))
+    cursor.execute(query, (dining_hall_id,))
     meals = cursor.fetchall()
     conn.close()
 
@@ -140,16 +139,15 @@ def meals_by_dining_hall(dining_hall_id):
 
     return jsonify(formatted_meals)
 
-@app.route("/view_meals_student/<int:inventory_id>")
+@app.route("/inventory_item/<int:inventory_id>")
 def inventory_item(inventory_id):
     conn = get_db_connection()
     cursor = conn.cursor()
     query = """
             SELECT * FROM Inventory 
-            WHERE InventoryID = %s 
-            AND expirationtime > %s
+            WHERE InventoryID = %s
     """
-    cursor.execute(query, (inventory_id, datetime.now()))
+    cursor.execute(query, (inventory_id,))
     item = cursor.fetchone()
     conn.close()
 
