@@ -120,11 +120,12 @@ def update_inventory():
     cursor = conn.cursor()
     try:
         # Handle POST request for updating the inventory
-        print('Headers: {}'.format(request.headers))
-        print('Body: {}'.format(request.data))
-        data = request.get_json(force=True)  # force=True forces the parsing of JSON
-        print('Data Received: {}'.format(data))
-        data = request.get_json()
+        print('Raw Data:', request.data)  # This will print the raw data received
+        print('Headers:', request.headers)  # This will print the headers
+
+        # Then try to parse JSON
+        data = request.get_json(force=True)  # force=True will force the parsing
+        print('JSON Data:', data)
     
         # Now, you should use 'data' instead of 'request.form' to access the values
         action = data.get('action')
