@@ -122,6 +122,7 @@ def update_inventory():
         # Handle POST request for updating the inventory
         action = request.form.get('action')
         inventory_id = request.form.get('inventory_id')
+        data = request.get_json() 
 
         # Input validation can be added here
         
@@ -149,7 +150,7 @@ def update_inventory():
                  request.form.get('expiration_time')))
         else:
             print(action)
-            print(request.form)
+            print(data)
             return jsonify({"error": "Invalid action"}), 400
 
         conn.commit()
