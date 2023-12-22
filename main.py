@@ -193,11 +193,12 @@ def inventory_item(inventory_id):
     if item is None:
         return jsonify({"error": "Inventory item not found"}), 404
 
+    print(item)
     formatted_item = {
         "inventory_id": item[0],
         "dining_hall_id": item[1],
         "food_item": item[2],
-        # ... add other fields as needed
+        "price:": item[3]
     }
 
     return jsonify(formatted_item)
