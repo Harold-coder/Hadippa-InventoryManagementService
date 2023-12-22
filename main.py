@@ -198,7 +198,8 @@ def inventory_item(inventory_id):
         "inventory_id": item[0],
         "dining_hall_id": item[1],
         "food_item": item[2],
-        "price:": item[3]
+        "quantity:": item[3], 
+        "price:": item[4]
     }
 
     return jsonify(formatted_item)
