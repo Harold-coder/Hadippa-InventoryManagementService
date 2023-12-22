@@ -129,6 +129,8 @@ def update_inventory():
         price = data.get('price')
         expiration_time = data.get('expiration_time')
 
+        print(data)
+
         if action == 'update':
             cursor.execute(
                 "UPDATE Inventory SET DiningHallID=%s, FoodItem=%s, Quantity=%s, Price=%s, ExpirationTime=%s WHERE InventoryID=%s",
