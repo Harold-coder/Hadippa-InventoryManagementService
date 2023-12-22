@@ -118,44 +118,48 @@ def view_inventory():
 def update_inventory():
     conn = get_db_connection()
     cursor = conn.cursor()
+    try:
+        # Handle POST request for updating the inventory
+        action = request.form.get('action')
+        inventory_id = request.form.get('inventory_id')
 
-    # Handle POST request for updating the inventory
-    action = request.form.get('action')
-    inventory_id = request.form.get('inventory_id')
+        # Input validation can be added here
+        
+        if action == 'update':
+            # Update an existing inventory item
+            cursor.execute(
+                "UPDATE Inventory SET DiningHallID=%s, FoodItem=%s, Quantity=%s, Price=%s, ExpirationTime=%s WHERE InventoryID=%s",
+                (request.form.get('dining_hall_id'),
+                 request.form.get('food_item'),
+                 request.form.get('quantity', type=int),
+                 request.form.get('price', type=float),
+                 request.form.get('expiration_time'),
+                 inventory_id))
+        elif action == 'delete':
+            # Delete an inventory item
+            cursor.execute("DELETE FROM Inventory WHERE InventoryID=%s", (inventory_id,))
+        elif action == 'add':
+            # Add a new inventory item
+            cursor.execute(
+                "INSERT INTO Inventory (DiningHallID, FoodItem, Quantity, Price, ExpirationTime) VALUES (%s, %s, %s, %s, %s)",
+                (request.form.get('dining_hall_id'),
+                 request.form.get('food_item'),
+                 request.form.get('quantity', type=int),
+                 request.form.get('price', type=float),
+                 request.form.get('expiration_time')))
+        else:
+            print(action)
+            print(request.form)
+            return jsonify({"error": "Invalid action"}), 400
 
-    dining_hall_id = request.form.get('dining_hall_id')
-    food_item = request.form.get('food_item')
-    quantity = request.form.get('quantity', type=int)
-    price = request.form.get('price', type=float)
-    expiration_time = request.form.get('expiration_time')
-
-    # Update or delete inventory items based on the action
-    if action == 'update':
-        # SQL query to update an existing inventory item
-        cursor.execute(
-            "UPDATE Inventory SET DiningHallID=%s, FoodItem=%s, Quantity=%s, Price=%s, ExpirationTime=%s WHERE InventoryID=%s",
-            (dining_hall_id, food_item, quantity, price, expiration_time, inventory_id))
         conn.commit()
-    elif action == 'delete':
-        # SQL query to delete an inventory item
-        cursor.execute("DELETE FROM Inventory WHERE InventoryID=%s", (inventory_id,))
-        conn.commit()
-    elif action == 'add':
-        # SQL query to add a new inventory item
-        cursor.execute(
-            "INSERT INTO Inventory (DiningHallID, FoodItem, Quantity, Price, ExpirationTime) VALUES (%s, %s, %s, %s, %s)",
-            (dining_hall_id, food_item, quantity, price, expiration_time))
-        conn.commit()
-    else:
-        print(request.form)
-        return jsonify({"error": "Invalid action"}), 400
-
-    # Commit the transaction and close the connection
-    conn.commit()
-    cursor.close()
-    conn.close()
-
-    return jsonify({"success": f"Inventory item {action}d successfully"})
+        return jsonify({"success": f"Inventory item {action}d successfully"})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
 
 @app.route("/meals_by_dining_hall/<string:dining_hall_id>", methods=['GET'])
 def meals_by_dining_hall(dining_hall_id):
