@@ -147,7 +147,7 @@ def update_inventory():
             (dining_hall_id, food_item, quantity, price, expiration_time))
         conn.commit()
     else:
-        print("Action:", action)
+        print("Action:", action.form)
         print(request)
         return jsonify({"error": "Invalid action"}), 400
 
