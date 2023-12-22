@@ -120,6 +120,9 @@ def update_inventory():
     cursor = conn.cursor()
     try:
         # Handle POST request for updating the inventory
+        data = request.get_json(force=True)  # force=True forces the parsing of JSON
+        print('Data Received: {}'.format(data))
+        print(jsonify(data))
         data = request.get_json()
     
         # Now, you should use 'data' instead of 'request.form' to access the values
@@ -130,7 +133,7 @@ def update_inventory():
         quantity = data.get('quantity')
         price = data.get('price')
         expiration_time = data.get('expiration_time')
-        
+
 
         # Input validation can be added here
         
