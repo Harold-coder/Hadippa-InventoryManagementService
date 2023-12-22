@@ -119,15 +119,8 @@ def update_inventory():
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        # Handle POST request for updating the inventory
-        print('Raw Data:', request.data)  # This will print the raw data received
-        print('Headers:', request.headers)  # This will print the headers
-
-        # Then try to parse JSON
         data = request.get_json(force=True)  # force=True will force the parsing
-        print('JSON Data:', data)
-    
-        # Now, you should use 'data' instead of 'request.form' to access the values
+
         action = data.get('action')
         inventory_id = data.get('inventory_id')
         dining_hall_id = data.get('dining_hall_id')
@@ -136,34 +129,17 @@ def update_inventory():
         price = data.get('price')
         expiration_time = data.get('expiration_time')
 
-
-        # Input validation can be added here
-        
         if action == 'update':
-            # Update an existing inventory item
             cursor.execute(
                 "UPDATE Inventory SET DiningHallID=%s, FoodItem=%s, Quantity=%s, Price=%s, ExpirationTime=%s WHERE InventoryID=%s",
-                (request.form.get('dining_hall_id'),
-                 request.form.get('food_item'),
-                 request.form.get('quantity', type=int),
-                 request.form.get('price', type=float),
-                 request.form.get('expiration_time'),
-                 inventory_id))
+                (dining_hall_id, food_item, quantity, price, expiration_time, inventory_id))
         elif action == 'delete':
-            # Delete an inventory item
             cursor.execute("DELETE FROM Inventory WHERE InventoryID=%s", (inventory_id,))
         elif action == 'add':
-            # Add a new inventory item
             cursor.execute(
                 "INSERT INTO Inventory (DiningHallID, FoodItem, Quantity, Price, ExpirationTime) VALUES (%s, %s, %s, %s, %s)",
-                (request.form.get('dining_hall_id'),
-                 request.form.get('food_item'),
-                 request.form.get('quantity', type=int),
-                 request.form.get('price', type=float),
-                 request.form.get('expiration_time')))
+                (dining_hall_id, food_item, quantity, price, expiration_time))
         else:
-            print(action)
-            print(data)
             return jsonify({"error": "Invalid action"}), 400
 
         conn.commit()
@@ -174,6 +150,7 @@ def update_inventory():
     finally:
         cursor.close()
         conn.close()
+
 
 @app.route("/meals_by_dining_hall/<string:dining_hall_id>", methods=['GET'])
 def meals_by_dining_hall(dining_hall_id):
